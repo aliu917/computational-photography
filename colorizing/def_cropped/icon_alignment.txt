@@ -1,0 +1,15 @@
+Border alignment
+Red: (-22, 0)
+Green: (-22, 0)
+Blue: (0, 0)
+
+Total alignment
+Red: (89, 22)
+Green: (41, 17)
+Blue: (0, 0)
+
+Relative alignment:
+Red: (89, 22)
+Green: (41, 17)
+Blue: (0, 0)
+
