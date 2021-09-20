@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>CS 194-26 Proj 1</title>
+    <link rel="stylesheet" href="main.css">
+    <script src="app.js"></script>
+  </head>
+  <body onload="loadImages()">
+    <div class="header">
+      <h2>CS 194-26 Project 2</h2>
+      <h1>Fun with Filters and Frequencies</h1>
+      <p2>Angela Liu</p2>
+    </div>
+
+    <div class="simple-section">
+      <h1 class="center"><span class="no=wrap">Overview</span></h1>
+      <p1>In this project, I experimented with a variety of different filters to blur, sharpen, merge, and create hybrid
+          images. Almost all of the implemented filtering techniques can be derived from the Gaussian filter, which 
+          serves as a low-pass filter over images. Building off of this, I played with high-pass filters to sharpen
+          images, manipulated frequencies of hybrid images to create different image intepretations at varying viewing
+          distances, and finally worked with Gaussian and Laplacian stacks to generate a smooth merging of images.
+      </p1>
+    </div>
+
+    <div class="simple-section">
+      <h2><span class="no=wrap">Part 1.1: Finite Difference Operator</span></h2>
+      <br />
+      <div class="content">
+        <div class="row">
+            <div class="cell">
+                <img alt="Partial Dx" src="imgs/part1_1/dx_img.jpg"><br />
+                <p4>Partial Dx</p4><br /><br />
+            </div>
+            <div class="cell">
+                <img alt="Partial Dy" src="imgs/part1_1/dy_img.jpg"><br />
+                <p4>Partial Dy</p4><br /><br />
+            </div>
+            <div class="cell">
+                <img alt="Gradient Magnitude" src="imgs/part1_1/img_gradient.jpg"><br />
+                <p4>Gradient Magnitude</p4><br /><br />
+            </div>
+            <div class="cell">
+                <img alt="Binarized Gradient Magnitude" src="imgs/part1_1/bin_img_gradient.jpg"><br />
+                <p4>Binarized Gradient Magnitude</p4><br /><p4>Threshold = 0.28</p4>
+            </div>
+        </div>
+      </div>
+      <p1>The gradient magnitude image is calculated by taking the square root of the sum of partial derivatives
+        squared. That is, grad_magnitude = sqrt(Dx^2 + Dy^2) where Dx is the partial derivative in X (calculated 
+        by taking the convolution of the image with [1, -1]) and Dy is the partial derivative in Y (calculated by
+        taking the convolution of the image with [[1], [-1]]).
+      </p1>
+    </div>
+
+    <div class="simple-section">
+      <h2><span class="no=wrap">Part 1.2: Derivative of Gaussian Filter</span></h2>
+      <br />
+      <div class="content">
+        <div class="row">
+          <div class="cell">
+            <img alt="Blurred Partial Dx" src="imgs/part1_2/dx_img.jpg"><br />
+            <p4>Blurred Partial Dx</p4><br /><br />
+          </div>
+          <div class="cell">
+              <img alt="Blurred Partial Dy" src="imgs/part1_2/dy_img.jpg"><br />
+              <p4>Blurred Partial Dy</p4><br /><br />
+          </div>
+          <div class="cell">
+              <img alt="Blurred Gradient Magnitude" src="imgs/part1_2/img_gradient.jpg"><br />
+              <p4>Blurred Gradient Magnitude</p4><br /><br />
+          </div>
+          <div class="cell">
+              <img alt="Blurred Binarized Gradient Magnitude" src="imgs/part1_2/bin_img_gradient.jpg"><br />
+              <p4>Blurred Binarized Gradient Magnitude</p4><br /><p4>Threshold = 0.05</p4>
+          </div>
+        </div>
+      </div>
+      <p1> The above images show the same process as part 1.1 but with an additional convolution with a Gaussian
+        prior to creating the partial derivatives and gradient images. Applying the Gaussian convolution step has 
+        the effect of adding a blur to the edges which makes the edges more prominent in the final binarized gradient
+        magnitude image. In the intermediate partial derivatives and gradient magnitude, we can similarly see that 
+        the border edges are more pronounced and the images (at least for the partials) are noticeably darker.
+      </p1>
+      <br />
+      <br />
+      <br />
+      <p2>One Convolution Verification</p2>
+      <br />
+      <div class="content">
+        <div class="row">
+          <div class="cell">
+              <img alt="Blurred Gradient Magnitude" src="imgs/part1_2_2/img_gradient.jpg"><br />
+              <p4>Blurred Gradient Magnitude</p4><br /><br />
+          </div>
+          <div class="cell">
+              <img alt="Blurred Binarized Gradient Magnitude" src="imgs/part1_2_2/bin_img_gradient.jpg"><br />
+              <p4>Blurred Binarized Gradient Magnitude</p4><br /><p4>Threshold = 0.05</p4>
+          </div>
+          <div class="cell">
+            <img alt="Blurred Binarized Gradient Magnitude" src="imgs/part1_2_2/bin_img_gradient_fix.jpg"><br />
+            <p4>Blurred Binarized Gradient Magnitude</p4><br /><p4>Threshold = 0.04</p4>
+          </div>
+        </div>
+      </div>
+      <p1> Applying the partial derivative convolutions onto the gaussian filter rather than directly on the image 
+        produces roughly the same result. We can see that the gradient magnitude is significantly darker but the edges 
+        that show up (while faint) look roughly the same as in the above blurred gradient magnitude. Due to being slightly 
+        darker, I had to use a slightly lower threshold (of 0.04) in order to make the binarized image more similar to the one 
+        achieved above.
+      </p1>
+    </div>
+
+    <div class="simple-section">
+      <h2><span class="no=wrap">Part 2.1 Image "Sharpening"</span></h2>
+      <br />
+      <div class="content">
+        <div class="row">
+          <div class="cell">
+              <img alt="Original Image" src="imgs/part2_1/taj.jpg"><br />
+              <p4>Original Image</p4><br /><br />
+          </div>
+          <div class="cell">
+              <img alt="Sharpened image" src="imgs/part2_1/sharp_taj.jpg"><br />
+              <p4>Sharpened image</p4><br /><p4>Alpha multiplier = 1.5</p4>
+          </div>
+          <div class="cell">
+            <img alt="Original Image" src="imgs/part2_1/monastery.jpg"><br />
+            <p4>Original Monastery</p4><br /><br />
+          </div>
+          <div class="cell">
+            <img alt="Sharpened image" src="imgs/part2_1/sharp_monastery.jpg"><br />
+            <p4>Sharpened Monastery</p4><br /><p4>Alpha multiplier = 0.9</p4>
+          </div>
+        </div>
+      </div>
+      <p1> Sharpened images: The first pair is from the provided taj.jpg 
+        image while the second is one that I chose from the Prokudin-Gorskii Photo Collection.
+      </p1>
+      <br />
+      <br />
+      <br />
+      <p2>Blur then Sharpen Results</p2>
+      <br />
+      <div class="content">
+        <div class="row">
+          <div class="cell">
+              <img alt="Original Image" src="imgs/part2_1_2/santorini.jpg"><br />
+              <p4>Original Image</p4><br /><br />
+          </div>
+          <div class="cell">
+            <img alt="Blurred image" src="imgs/part2_1_2/blurred_santorini.jpg"><br />
+            <p4>Blurred image</p4><br /><br />
+        </div>
+          <div class="cell">
+              <img alt="Re-sharpened image" src="imgs/part2_1_2/sharp_santorini.jpg"><br />
+              <p4>Re-sharpened image</p4><br /><p4>Alpha multiplier = 8.5</p4>
+          </div>
+        </div>
+      </div>
+      <br />
+      <div class="content">
+        <div class="row">
+          <div class="cell">
+            <img alt="Original Image" src="imgs/part2_1_2/athens.jpg"><br />
+            <p4>Original Image</p4><br /><br />
+          </div>
+          <div class="cell">
+            <img alt="Blurred image" src="imgs/part2_1_2/blurred_athens.jpg"><br />
+            <p4>Blurred image</p4><br /><br />
+          </div>
+          <div class="cell">
+              <img alt="Re-sharpened image" src="imgs/part2_1_2/sharp_athens.jpg"><br />
+              <p4>Re-sharpened image</p4><br /><p4>Alpha multiplier = 8.5</p4>
+          </div>
+        </div>
+        <p1> Looking at the blurred and sharpened images, we can see that the re-sharpening does a very good
+          job of providing greater resolution of the image after blurring. However, in both of these photos, 
+          it required a much higher high frequency multiplier in order to achieve almost the same resolution 
+          result as the original image. (Blurring amount was done using size 10 kernels with sigma value of 3.)
+          One thing to notice is that the re-sharpening only really re-defines the edges, but the loss in color 
+          contrast due to blurring is not retained (as can be seen in the sky of the top row images.) Meanwhile,
+          looking at the images in the bottom row, the original image has its focus on the foreground (the small weed) 
+          and the background monument is a bit blurred to begin with. After blurring and re-sharpening, the re-sharpened 
+          image seems to attempt to define some of the edges in the background, creating more severe cracks and edges 
+          in the monument that weren't as well-defined in the original. Additionally, the weed in the foreground is not as 
+          precisely outlined as in the original.
+        </p1>
+      </div>
+    </div>
+
+    <div class="simple-section">
+      <h2><span class="no=wrap">Part 2.2: Hybrid Images</span></h2>
+      <br /><br /><br />
+      <p2>Provided Derek/Nutmeg hybrid</p2><br />
+      <div class="content">
+        <div class="row">
+          <div class="cell">
+            <img alt="Nutmeg image" src="imgs/part2_2/nutmeg.jpg"><br />
+            <p4>Nutmeg Image</p4><br />
+          </div>
+          <div class="cell">
+            <img alt="Hybrid close image" src="imgs/part2_2/nutmeg_DerekPicture_close.jpg"><br />
+            <p4>Hybrid image (close)</p4>
+          </div>
+          <div class="cell">
+            <img alt="Hybrid far image" src="imgs/part2_2/nutmeg_DerekPicture_far.jpeg"><br />
+            <p4>Hybrid image (far)</p4>
+          </div>
+          <div class="cell">
+            <img alt="Derek Image" src="imgs/part2_2/DerekPicture.jpg"><br />
+            <p4>Derek Image</p4><br /><br />
+          </div>
+        </div>
+
+        <br />
+        <p2>Me and a bird hybrid</p2><br />
+        <div class="row">
+          <div class="cell">
+            <img alt="Me and bird at 19" src="imgs/part2_2/bird2.jpg"><br />
+            <p4>Me and a bird (at 19)</p4><br />
+          </div>
+          <div class="cell">
+            <img alt="Hybrid close image" src="imgs/part2_2/bird2_bird_close.jpg"><br />
+            <p4>Hybrid image (close)</p4>
+          </div>
+          <div class="cell">
+            <img alt="Hybrid far image" src="imgs/part2_2/bird2_bird_far.jpeg"><br />
+            <p4>Hybrid image (far)</p4>
+          </div>
+          <div class="cell">
+            <img alt="Me and bird at 11" src="imgs/part2_2/bird.jpg"><br />
+            <p4>Me and a bird (at 11)</p4><br /><br />
+          </div>
+        </div>
+        <p1> I found that putting a hybrid of me at 19 with a bird using high frequency and me at 11 
+          with a (different but similar looking) bird at low frequency worked pretty well. This is because the more recent 
+          photo of me has a lot higher resolution which worked well in extracting out the high frequencies 
+          for close distance viewing while the photo of me at 11 was taken a long time ago with a worse iphone camera 
+          so the low frequencies worked well as a background that is visible in far distances. As a failure example, I also 
+          tried doing it the opposite way (using the more recent photo as the low frequency and the photo of me 
+          at age 11 with high frequency) and this did not work well at all. Results are shown below. I believe this is 
+          due to the fact that the photo of me at 11 did not have as much high frequency in terms of the facial 
+          features and hair so it's very hard to distinguish since not a lot of high frequency signal was able to get through 
+          the high frequency filter and overlay on top of the more recent photo of my face. As a result, we get a very 
+          odd-looking baby face filter that is partially visible and an extremely pronounced bird outline in both close and far 
+          viewing distances. (I had to crank up the high frequency visibility in order to get the baby-version of myself to 
+          even show up which made the white bird and ice cream very pronounced.) 
+        </p1>
+        <br />
+        <br />
+        <p2>Me and a bird hybrid failure</p2><br />
+        <div class="row">
+          <div class="cell">
+            <img alt="Me and bird at 11" src="imgs/part2_2/bird.jpg"><br />
+            <p4>Me and a bird (at 11)</p4><br />
+          </div>
+          <div class="cell">
+            <img alt="Hybrid close image" src="imgs/part2_2/bird_bird2_close.jpg"><br />
+            <p4>Hybrid image (close)</p4>
+          </div>
+          <div class="cell">
+            <img alt="Hybrid far image" src="imgs/part2_2/bird_bird2_far.jpeg"><br />
+            <p4>Hybrid image (far)</p4>
+          </div>
+          <div class="cell">
+            <img alt="Me and bird at 19" src="imgs/part2_2/bird2.jpg"><br />
+            <p4>Me and a bird (at 19)</p4><br /><br />
+          </div>
+        </div>
+        <br /><br />
+        <p2>Some hybrid images that don't involve me (A dog and a llama)</p2><br />
+        <div class="row">
+          <div class="cell">
+            <img alt="Dog image" src="imgs/part2_2/dog.jpg"><br />
+            <p4>Dog</p4><br />
+          </div>
+          <div class="cell">
+            <img alt="Hybrid close image" src="imgs/part2_2/dog_llama_close.jpg"><br />
+            <p4>Hybrid image (close)</p4>
+          </div>
+          <div class="cell">
+            <img alt="Hybrid far image" src="imgs/part2_2/dog_llama_far.jpeg"><br />
+            <p4>Hybrid image (far)</p4>
+          </div>
+          <div class="cell">
+            <img alt="Llama Image" src="imgs/part2_2/llama.jpg"><br />
+            <p4>Llama</p4><br /><br />
+          </div>
+        </div>
+        <p1> These are two animal photos in my camera roll. I found that creating a hybrid out of these turned 
+          out pretty well since both animals have a similar angle of head tilt and the dog has a tongue sticking 
+          out which gives it a lot of high frequency data that is very clearly pronounced in the closeup while the 
+          llama's closed and slightly uptilted mouth is visible in the far distance image. The frequency analysis 
+          for each of these images is as follows:
+        </p1>
+        <div class="row">
+          <div class="cell">
+            <img alt="Dog image" src="imgs/part2_2/transforms/image1_high_transform.jpg" class="image"><br />
+            <p4>Log Fourier transform of input dog image</p4><br /><br />
+          </div>
+          <div class="cell">
+            <img alt="Hybrid far image" src="imgs/part2_2/transforms/high_frequency_transform.jpg" class="image"><br />
+            <p4>Log Fourier transform of high frequency filtered dog image</p4>
+          </div>
+          <div class="cell">
+            <img alt="Hybrid far image" src="imgs/part2_2/transforms/hybrid_image_transform.jpg" class="image"><br />
+            <p4>Log Fourier transform of hybrid image</p4><br /><br />
+          </div>
+          <div class="cell">
+            <img alt="Hybrid close image" src="imgs/part2_2/transforms/low_frequency_transform.jpg" class="image"><br />
+            <p4>Log Fourier transform of low frequency filtered llama image</p4>
+          </div>
+          <div class="cell">
+            <img alt="Llama Image" src="imgs/part2_2/transforms/image2_low_transform.jpg" class="image"><br />
+            <p4>Log Fourier transform of input llama image</p4><br /><br />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="simple-section">
+      <h2><span class="no=wrap">Part 2.3: Gaussian and Laplacian Stacks</span></h2>
+      <br />
+      <div class="float-container">
+        <div class="float-child">
+          <div class="grid-container">
+            <div class="img-wrap">
+              <img alt="l0" src="imgs/part2_3/laplacians/left/left0.jpg" class="image"><br />
+            </div>
+            <div class="img-wrap">
+              <img alt="r0" src="imgs/part2_3/laplacians/right/right0.jpg" class="image"><br />
+            </div>
+            <div class="img-wrap">
+              <img alt="c0" src="imgs/part2_3/laplacians/combined/combined0.jpg" class="image"><br />
+            </div>
+            <div class="img-wrap">
+              <img alt="l2" src="imgs/part2_3/laplacians/left/left2.jpg" class="image"><br />
+            </div>
+            <div class="img-wrap">
+              <img alt="r2" src="imgs/part2_3/laplacians/right/right2.jpg" class="image"><br />
+            </div>
+            <div class="img-wrap">
+              <img alt="c2" src="imgs/part2_3/laplacians/combined/combined2.jpg" class="image"><br />
+            </div>
+            <div class="img-wrap">
+              <img alt="l4" src="imgs/part2_3/laplacians/left/left4.jpg" class="image"><br />
+            </div>
+            <div class="img-wrap">
+              <img alt="r4" src="imgs/part2_3/laplacians/right/right4.jpg" class="image"><br />
+            </div>
+            <div class="img-wrap">
+              <img alt="c4" src="imgs/part2_3/laplacians/combined/combined4.jpg" class="image"><br />
+            </div>
+            <div class="img-wrap">
+                <img alt="l" src="imgs/part2_3/laplacians/left/left.jpg" class="image"><br />
+            </div>
+            <div class="img-wrap">
+              <img alt="r" src="imgs/part2_3/laplacians/right/right.jpg" class="image"><br />
+            </div>
+            <div class="img-wrap">
+              <img alt="c" src="imgs/part2_3/laplacians/combined/combined.jpg" class="image"><br />
+            </div>
+          </div> 
+          <p4>Laplacian Pyramid</p4><br />
+          <p4>(Regular Black/White)</p4>
+        </div>
+      
+        <div class="float-child">
+          <div class="grid-container">
+            <div class="img-wrap">
+              <img alt="l0" src="imgs/part2_3/color_laplacians/left/left0.jpg" class="image"><br />
+            </div>
+            <div class="img-wrap">
+              <img alt="r0" src="imgs/part2_3/color_laplacians/right/right0.jpg" class="image"><br />
+            </div>
+            <div class="img-wrap">
+              <img alt="c0" src="imgs/part2_3/color_laplacians/combined/combined0.jpg" class="image"><br />
+            </div>
+            <div class="img-wrap">
+              <img alt="l2" src="imgs/part2_3/color_laplacians/left/left2.jpg" class="image"><br />
+            </div>
+            <div class="img-wrap">
+              <img alt="r2" src="imgs/part2_3/color_laplacians/right/right2.jpg" class="image"><br />
+            </div>
+            <div class="img-wrap">
+              <img alt="c2" src="imgs/part2_3/color_laplacians/combined/combined2.jpg" class="image"><br />
+            </div>
+            <div class="img-wrap">
+              <img alt="l4" src="imgs/part2_3/color_laplacians/left/left4.jpg" class="image"><br />
+            </div>
+            <div class="img-wrap">
+              <img alt="r4" src="imgs/part2_3/color_laplacians/right/right4.jpg" class="image"><br />
+            </div>
+            <div class="img-wrap">
+              <img alt="c4" src="imgs/part2_3/color_laplacians/combined/combined4.jpg" class="image"><br />
+            </div>
+            <div class="img-wrap">
+                <img alt="l" src="imgs/part2_3/color_laplacians/left/left.jpg" class="image"><br />
+            </div>
+            <div class="img-wrap">
+              <img alt="r" src="imgs/part2_3/color_laplacians/right/right.jpg" class="image"><br />
+            </div>
+            <div class="img-wrap">
+              <img alt="c" src="imgs/part2_3/color_laplacians/combined/combined.jpg" class="image"><br />
+            </div>
+          </div>
+          <p4>Laplacian Pyramid</p4><br />
+          <p4>(Bells & Whistles Color)</p4>
+        </div>
+      </div>
+      <p1> Above are two Laplacian pyramids for left, right, and combined laplacians run on the 
+        provided apple and orange inputs.
+      </p1>
+    </div>
+
+    <div class="simple-section">
+      <h2><span class="no=wrap">Part 2.4: Multiresolution Blending</span></h2>
+      <br /><br />
+      <p2>Normal Mask</p2><br />
+      <div class="row">
+        <div class="cell">
+          <img alt="apple" src="imgs/part2_4/apple.jpeg"><br />
+          <p4>Apple</p4>
+        </div>
+        <div class="cell">
+          <img alt="oraple" src="imgs/part2_4/apple_orange.jpg"><br />
+          <p4>Oraple</p4>
+        </div>
+        <div class="cell">
+            <img alt="orange" src="imgs/part2_4/orange.jpeg"><br />
+            <p4>Orange</p4>
+        </div>
+      </div>
+      <div class="row">
+        <div class="cell">
+          <img alt="pasta" src="imgs/part2_4/pasta.jpg"><br />
+          <p4>Pasta</p4>
+        </div>
+        <div class="cell">
+          <img alt="pastad" src="imgs/part2_4/pasta_salad.jpg"><br />
+          <p4>Pastad</p4>
+        </div>
+        <div class="cell">
+            <img alt="salad" src="imgs/part2_4/salad.jpg"><br />
+            <p4>Salad</p4>
+        </div>
+      </div>
+      <br /><br />
+      <p2>Irregular Mask</p2><br />
+      <div class="row">
+        <div class="cell">
+          <img alt="forest trail" src="imgs/part2_4_2/forest.jpg"><br />
+          <p4>Forest trail</p4>
+        </div>
+        <div class="cell">
+          <img alt="Blended image" src="imgs/part2_4_2/totorro_forest.jpg"><br />
+          <p4>Blended image</p4>
+        </div>
+        <div class="cell">
+            <img alt="totorro" src="imgs/part2_4_2/totorro.jpg"><br />
+            <p4>Totorro</p4>
+        </div>
+      </div>
+      <p1> Here is a multiresolution blending of totorro in a park trail. I created an irregular 
+        mask that is an oval shape which surrounds the main part of the totorro structure and placed it 
+        inside an image I took of a park forest trail.
+      </p1>
+    </div>
+
+    <div class="simple-section">
+      <h1 class="center"><span class="no=wrap">Conclusion</span></h1>
+      <p1> The coolest and most interesting thing I learned from this project was probably creating the unsharp 
+        mask filter for sharpening images. When I take pictures, the most often complaint is lack of resolution so 
+        I thought it was super cool to learn that sharpening an image is actually not that difficult--and in fact, 
+        can be achieved by creating a blured version of the image (which was quite contrary to what one might 
+        imagine!). The unsharp mask filter also provides a very clear and clean way of sharpening an image with one 
+        convolution so I found it really useful, simple, and applicable for many cases.
+      </p1>
+      <br /><br />
+      <p1>
+        One of the most important things I learned in this project is how convolutions work in the manipulation of images 
+        and image frequencies. All of the above methods rely foundationally on convolutions with a Gaussian and it was really interesting 
+        to learn why Gaussians were the popular filter choice (due to its shape and fourier transform) and work hands-on with 
+        different applications of Gaussians and see the wide myriad of image manipulations that can be achieved just from 
+        applying a convolution in a different order or method.
+      </p1>
+    </div>
+  </body>
+</html> 
