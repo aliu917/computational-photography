@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>CS 194-26 Proj 1</title>
+    <link rel="stylesheet" href="main.css">
+    <script src="app.js"></script>
+  </head>
+  <body onload="loadImages()">
+    <div class="header">
+      <h2>CS 194-26 Project 3</h2>
+      <h1>Face Morphing</h1>
+      <p2>Angela Liu</p2>
+    </div>
+
+    <div class="simple-section">
+      <h1 class="center"><span class="no=wrap">Overview</span></h1>
+      <p1>In this project, I played around with different image morphing techniques involving warping 
+           and interpolating colors to combine multiple images.
+      </p1>
+    </div>
+
+    <div class="simple-section">
+      <h2><span class="no=wrap">Defining Correspondences</span></h2>
+      <br />
+      <div class="content">
+        <div class="row">
+            <div class="cell">
+                <img alt="Points" src="imgs/face_points.jpg"><br />
+                <p4>Points</p4><br /><br /><br />
+            </div>
+            <div class="cell">
+                <img alt="Average Triangulation" src="imgs/face_avg_triangulation.jpg"><br />
+                <p4>Average</p4><br /><p4>Triangulation</p4>
+            </div>
+            <div class="cell">
+                <img alt="Average Triangulation" src="imgs/george_avg_triangulation.jpg"><br />
+                <p4>Average</p4><br /><p4>Triangulation</p4>
+            </div>
+            <div class="cell">
+                <img alt="Points" src="imgs/george_points.jpg"><br />
+                <p4>Points</p4><br /><br />
+            </div>
+        </div>
+      </div>
+      <br />
+      <p1>Here are the self-selected correspondence points and the Delaunay triangulation created 
+        over the average points overlayed on top of each image.
+      </p1>
+    </div>
+
+    <div class="simple-section">
+      <h2><span class="no=wrap">Midway Face</span></h2>
+      <br />
+      <div class="content">
+        <div class="row">
+          <div class="cell">
+            <img alt="Original Face" src="imgs/face.jpg"><br />
+            <p4>Original Face</p4>
+          </div>
+          <div class="cell">
+              <img alt="Midway Face" src="imgs/face_george_50.jpg"><br />
+              <p4>Midway Face</p4>
+          </div>
+          <div class="cell">
+              <img alt="Original George" src="imgs/george.jpg"><br />
+              <p4>Original George</p4>
+          </div>
+        </div>
+      </div>
+      <br />
+      <p1> This is the exact midway face which contains color dissolves using 50% of my image's colors 
+        and 50% of George's. Our faces were each morphed to the average points of both correspondences.
+      </p1>
+    </div>
+
+    <div class="simple-section">
+      <h2><span class="no=wrap">Morph Sequence</span></h2>
+      <br />
+      <br />
+      <p1> Unfortunately, due to file size issues (the gif is 28MB!), I am not able to display it 
+        on the website but <a href="https://youtu.be/qKiwcU4SoVY">here</a> is a link to the gif on youtube. To create this gif, I created a series of midway 
+        frames where each had a different warp and dissolve factor ranging from 0 to 1 which produced the 
+        smooth transition from my face to George's.
+      </p1>
+    </div>
+
+    <div class="simple-section">
+      <h2><span class="no=wrap">Mean Face</span></h2>
+      <br />
+      <div class="content">
+        <div class="row">
+          <div class="cell">
+            <img alt="Mean Dane" src="imgs/danes.jpg"><br />
+            <p4>Mean Dane</p4><br />
+          </div>
+          <div class="cell">
+            <img alt="My face morphed onto mean Dane" src="imgs/my_face_on_mean_danes.jpg"><br />
+            <p4>My face morphed onto mean Dane</p4>
+          </div>
+          <div class="cell">
+            <img alt="Mean Danes morphed onto my face" src="imgs/mean_danes_on_my_face.jpg"><br />
+            <p4>Mean Danes morphed onto my face</p4>
+          </div>
+        </div>
+      </div>
+      <br />
+      <p1> I computed the mean Dane face by taking the average points of all Dean faces and warping each 
+        Dane face to this average triangulation template and then setting the color dissolve to 1/N where 
+        N is the number of Dane faces.
+      </p1>
+    </div>
+
+    <div class="simple-section">
+      <h2><span class="no=wrap">Caricatures</span></h2>
+      <br />
+      <div class="content">
+        <div class="row">
+          <div class="cell">
+            <img alt="Low Caricature" src="imgs/caricature_0.5.jpg"><br />
+            <p4>Low Caricature</p4><br /><p4>alpha = 0.5</p4>
+          </div>
+          <div class="cell">
+            <img alt="High Caricature" src="imgs/caricature_1.5.jpg"><br />
+            <p4>High Caricature</p4><br /><p4>alpha = 1.5</p4>
+          </div>
+        </div>
+      </div>
+      <br />
+      <p1> The caricatures turned out really strange and I'm guessing this was because of the way 
+        I identified correspondences (I manually selected them by hand) so it was difficult to get 
+        the points to match up exactly especially since the mean Danes face was a lot smaller than my own.
+        I noticed that a smaller alpha worked better and this is likely due to the fact that my face 
+        is a lot more similar to the opposite of a normal Dane's face.
+      </p1>
+    </div>
+
+    <div class="simple-section">
+      <h2><span class="no=wrap">Bells & Whistles</span></h2>
+      <br /><br />
+      <p1>For the bells and whistles section, I implemented a morphing of my own face from when I was 7 up 
+      until a recent picture and then ending with a picture of my mom (what I will look like in the future?).
+      I hand-selected correspondence points and produced a series of morphings between each sequence of images 
+      to create the final result. Link to youtube video can be found <a href="https://youtu.be/Vf1oUGxdSsw">here</a>.</p1>
+    </div>
+
+  </body>
+</html> 
